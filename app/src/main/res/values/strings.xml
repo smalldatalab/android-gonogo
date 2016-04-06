@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Pulsus</string>
+    <string name="square_task">Square Task</string>
+    <string name="balloon_game">Balloon Game</string>
+    <string name="self_report">Self-Report</string>
+    <string name="title_activity_main2">Main2Activity</string>
+</resources>
