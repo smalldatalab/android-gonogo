@@ -4,4 +4,6 @@
     <string name="balloon_game">Balloon Game</string>
     <string name="self_report">Self-Report</string>
     <string name="title_activity_main2">Main2Activity</string>
+    <string name="profile_action">Profile</string>
+    <string name="logout_action">Logout</string>
 </resources>
