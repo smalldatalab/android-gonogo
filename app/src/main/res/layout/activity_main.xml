@@ -26,7 +26,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="70dp"
                 android:text="@string/square_task"
-                android:id="@+id/square_task"
+                android:id="@+id/square_task_button"
                 android:layout_gravity="center"/>
 
         </LinearLayout>
@@ -39,7 +39,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="70dp"
                 android:text="@string/balloon_game"
-                android:id="@+id/balloon_game"
+                android:id="@+id/balloon_game_button"
                 android:layout_gravity="center"/>
 
         </LinearLayout>
@@ -52,7 +52,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="70dp"
                 android:text="@string/self_report"
-                android:id="@+id/self_report"
+                android:id="@+id/self_report_button"
                 android:layout_gravity="center"/>
 
         </LinearLayout>
