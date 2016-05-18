@@ -7,7 +7,34 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
+    android:id="@+id/square_task_main_layout"
     tools:context="org.ohmage.pulsus.SquareTask">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/start_square_task_button">
+
+        <View
+            android:layout_width="80dp"
+            android:layout_height="140dp"
+            android:gravity="center_vertical|center_horizontal"
+            android:id="@+id/game_view"
+            android:alpha="0.0"
+            android:layout_centerInParent="true"
+            android:background="@drawable/valid_color_background"/>
+
+        <ImageView
+            android:layout_width="140dp"
+            android:layout_height="140dp"
+            android:gravity="center_vertical|center_horizontal"
+            android:id="@+id/plus_image"
+            android:alpha="0.0"
+            android:layout_centerInParent="true"
+            android:contentDescription="@string/plus"
+            android:background="@drawable/plus_sign" />
+
+    </RelativeLayout>
 
     <TextView
         android:layout_width="wrap_content"
@@ -33,4 +60,16 @@
         android:layout_alignParentStart="true"
         android:layout_alignRight="@+id/square_task_instructions"
         android:layout_alignEnd="@+id/square_task_instructions" />
+
+    <TextView
+        android:id="@+id/feedback_label"
+        android:layout_width="wrap_content"
+        android:layout_height="60dp"
+        android:alpha="0.0"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignRight="@+id/square_task_instructions"
+        android:layout_alignEnd="@+id/square_task_instructions"
+        android:gravity="center_vertical|center_horizontal"/>
 </RelativeLayout>
