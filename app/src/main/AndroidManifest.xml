@@ -22,7 +22,9 @@
             </intent-filter>
         </activity>
         <activity android:name=".ProfileActivity" />
-        <activity android:name=".SquareTask" />
+        <activity
+            android:name=".SquareTask"
+            android:screenOrientation="portrait"/>
     </application>
 
 </manifest>

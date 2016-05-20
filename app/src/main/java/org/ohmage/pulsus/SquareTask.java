@@ -10,6 +10,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.view.animation.Animation;
 import android.widget.Button;
@@ -18,6 +19,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.lang.reflect.Array;
 import java.util.Random;
 import java.util.Timer;
 
@@ -34,9 +36,13 @@ public class SquareTask extends AppCompatActivity {
     // Flags
     Boolean testInProgress = Boolean.FALSE;
     Boolean shouldTap = Boolean.FALSE;
+    int currentIndex = 0;
 
-    Chronometer chronometer;
+    // Testing Variables
     int TOTAL_LOOPS = 10;
+    Chronometer chronometer;
+    long[] responseTimes = new long[TOTAL_LOOPS];
+    Boolean[] correctnessArray = new Boolean[TOTAL_LOOPS];
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -110,21 +116,31 @@ public class SquareTask extends AppCompatActivity {
                                 // Randomly select between valid and invalid color
                                 int i = new Random().nextInt(100 + 1);
                                 int drawable;
+
+                                // Should Tap
                                 if (i > 30) {
                                     drawable = R.drawable.valid_color_background;
                                     shouldTap = Boolean.TRUE;
+
+                                    correctnessArray[currentIndex] = Boolean.FALSE; // Assume incorrect (tapped)
+                                    responseTimes[currentIndex] = 0;
+
+                                // Should NOT Tap
                                 } else {
                                     drawable = R.drawable.invalid_color_background;
                                     shouldTap = Boolean.FALSE;
+
+                                    correctnessArray[currentIndex] = Boolean.TRUE; // Assume correct (not tapped)
+                                    responseTimes[currentIndex] = 0;
                                 }
                                 squareView.setBackground(ContextCompat.getDrawable(getBaseContext(), drawable));
-
-                                // Allow for tapping screen
-                                testInProgress = Boolean.TRUE;
 
                                 // Start chronometer
                                 chronometer.setBase(SystemClock.elapsedRealtime());
                                 chronometer.start();
+
+                                // Allow for tapping screen
+                                testInProgress = Boolean.TRUE;
 
                                 // Finally, hide after 1000ms
                                 new Handler().postDelayed(new Runnable() {
@@ -136,11 +152,12 @@ public class SquareTask extends AppCompatActivity {
                                         new Handler().postDelayed(new Runnable() {
                                             @Override
                                             public void run() {
-                                                if (--TOTAL_LOOPS > 0) {
+                                                if (currentIndex < (TOTAL_LOOPS - 1)) {
+                                                    currentIndex++;
                                                     loop();
                                                 } else {
                                                     mainLayout.setOnClickListener(null);
-                                                    Toast.makeText(getBaseContext(), "Done with 10 loops!", Toast.LENGTH_LONG).show();
+                                                    showResults();
                                                 }
                                             }
                                         }, 600);
@@ -156,23 +173,29 @@ public class SquareTask extends AppCompatActivity {
 
     private void tappedSquare() {
 
-        Log.d("TAG", "No test in progress, stop tapping!");
-
         // No test going on now, ignore taps
         if (!testInProgress) {
             return;
         }
 
-        // Show feedback
+        // Valid
         if (shouldTap) {
             long time = SystemClock.elapsedRealtime() - chronometer.getBase();
 
             feedbackLabel.setText("Correct! "+time+" ms");
             feedbackLabel.setTextColor(ContextCompat.getColor(getBaseContext(), R.color.validColor));
+
+            // Record event
+            correctnessArray[currentIndex] = Boolean.TRUE;
+            responseTimes[currentIndex] = time;
+
+        // Invalid
         } else {
 
             feedbackLabel.setText("Incorrect!");
             feedbackLabel.setTextColor(ContextCompat.getColor(getBaseContext(), R.color.invalidColor));
+
+            correctnessArray[currentIndex] = Boolean.FALSE;
         }
 
         // Show feedback label
@@ -184,10 +207,47 @@ public class SquareTask extends AppCompatActivity {
             }
         }, 600);
 
+        testInProgress = Boolean.FALSE;
         chronometer.stop();
     }
 
     private void showResults() {
 
+        // Count number of right answers
+        int numRightAnswers = 0;
+        for (int i=0; i<TOTAL_LOOPS; i++) {
+            if (correctnessArray[i] == Boolean.TRUE)
+                numRightAnswers++;
+        }
+        int numWrongAnswers = TOTAL_LOOPS - numRightAnswers;
+
+        // Compute average response time
+        int occurrences, total;
+        occurrences = total = 0;
+        for (int i=0; i<TOTAL_LOOPS; i++) {
+            if (responseTimes[i] > 0) {
+                total += responseTimes[i];
+                occurrences++;
+            }
+        }
+        double averageResponseTime = (double)total / occurrences;
+
+        // Commissions (hit when should not
+        for (int i=0; i<TOTAL_LOOPS; i++) {
+
+        }
+
+        // Make results string
+        String results = "";
+        results += "Correct Answers: " + numRightAnswers + "\n";
+        results += "Incorrect Answers: " + numWrongAnswers + "\n";
+        results += "Mean Response Time: " + averageResponseTime+" msec" + "\n";
+//        "Number of Commissions (hit when should not): %d\n\n"
+//        "Number of Ommissions (not hit when should): %d",
+
+        // Display results in instructions textview
+        instructionsTextView.setText(results);
+        instructionsTextView.setGravity(Gravity.CENTER_VERTICAL);
+        instructionsTextView.animate().alpha(1.f);
     }
 }
