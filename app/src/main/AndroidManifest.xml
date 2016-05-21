@@ -24,7 +24,13 @@
         <activity android:name=".ProfileActivity" />
         <activity
             android:name=".SquareTask"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".SelfReport"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".BalloonGame"
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>

@@ -1,10 +1,8 @@
 package org.ohmage.pulsus;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -24,6 +22,24 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, SquareTask.class);
+                startActivity(intent);
+            }
+        });
+
+        final Button balloonGameButton = (Button) findViewById(R.id.balloon_game_button);
+        balloonGameButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, BalloonGame.class);
+                startActivity(intent);
+            }
+        });
+
+        final Button selfReportButton = (Button) findViewById(R.id.self_report_button);
+        selfReportButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, SelfReport.class);
                 startActivity(intent);
             }
         });

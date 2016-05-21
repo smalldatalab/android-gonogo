@@ -43,6 +43,7 @@ public class SquareTask extends AppCompatActivity {
     Chronometer chronometer;
     long[] responseTimes = new long[TOTAL_LOOPS];
     Boolean[] correctnessArray = new Boolean[TOTAL_LOOPS];
+    Boolean[] goCuesArray = new Boolean[TOTAL_LOOPS];
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -105,8 +106,14 @@ public class SquareTask extends AppCompatActivity {
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        squareView.setAlpha(1.0f);
+
+                        final Boolean horizontal = (new Random().nextInt(2) == 0) ? Boolean.TRUE : Boolean.FALSE;
                         squareView.setBackground(ContextCompat.getDrawable(getBaseContext(), R.drawable.no_color_background));
+                        squareView.setAlpha(1.0f);
+
+                        // Rotate square to horizontal position
+                        if (horizontal)
+                            squareView.setRotation(90);
 
                         // Then show color after 550ms
                         new Handler().postDelayed(new Runnable() {
@@ -114,12 +121,14 @@ public class SquareTask extends AppCompatActivity {
                             public void run() {
 
                                 // Randomly select between valid and invalid color
-                                int i = new Random().nextInt(100 + 1);
+                                int i = new Random().nextInt(100);
                                 int drawable;
 
-                                // Should Tap
-                                if (i > 30) {
+                                // GO
+                                if ((i > 30 && horizontal) || (!horizontal && i < 30)) {
                                     drawable = R.drawable.valid_color_background;
+
+                                    goCuesArray[currentIndex] = Boolean.TRUE;
                                     shouldTap = Boolean.TRUE;
 
                                     correctnessArray[currentIndex] = Boolean.FALSE; // Assume incorrect (tapped)
@@ -128,6 +137,8 @@ public class SquareTask extends AppCompatActivity {
                                 // Should NOT Tap
                                 } else {
                                     drawable = R.drawable.invalid_color_background;
+
+                                    goCuesArray[currentIndex] = Boolean.FALSE;
                                     shouldTap = Boolean.FALSE;
 
                                     correctnessArray[currentIndex] = Boolean.TRUE; // Assume correct (not tapped)
@@ -147,6 +158,11 @@ public class SquareTask extends AppCompatActivity {
                                     @Override
                                     public void run() {
                                         squareView.setAlpha(0.0f);
+
+                                        // Set square back to vertical position
+                                        if (horizontal)
+                                            squareView.setRotation(-90);
+
                                         testInProgress = Boolean.FALSE;
 
                                         new Handler().postDelayed(new Runnable() {
@@ -241,7 +257,9 @@ public class SquareTask extends AppCompatActivity {
         String results = "";
         results += "Correct Answers: " + numRightAnswers + "\n";
         results += "Incorrect Answers: " + numWrongAnswers + "\n";
-        results += "Mean Response Time: " + averageResponseTime+" msec" + "\n";
+        if (occurrences > 0) {
+            results += "Mean Response Time: " + averageResponseTime + " msec" + "\n";
+        }
 //        "Number of Commissions (hit when should not): %d\n\n"
 //        "Number of Ommissions (not hit when should): %d",
 
