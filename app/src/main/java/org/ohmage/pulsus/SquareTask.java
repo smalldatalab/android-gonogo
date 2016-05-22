@@ -9,6 +9,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.Html;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -51,6 +52,9 @@ public class SquareTask extends AppCompatActivity {
         setContentView(R.layout.activity_square_task);
 
         findViews();
+
+        // Bold part of instructions
+        instructionsTextView.setText(Html.fromHtml("Welcome to the Square Task.<br/><br/><br/>Once you start, you will be presented with a rectangle. When the rectangle turns <b>green, tap anywhere on the screen as quickly as possible</b>. When it turns <b>blue, do not respond at all</b>. <br/><br/>The test will take approximately <b>3 min</b>."));
 
         // OnClick Listeners
         startTaskButton.setOnClickListener(new View.OnClickListener() {

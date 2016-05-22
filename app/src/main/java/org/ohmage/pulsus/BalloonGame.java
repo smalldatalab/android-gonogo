@@ -4,6 +4,7 @@ import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.Html;
 import android.transition.Explode;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -11,6 +12,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import tyrantgit.explosionfield.ExplosionAnimator;
@@ -45,6 +47,10 @@ public class BalloonGame extends AppCompatActivity {
         setContentView(R.layout.activity_balloon_game);
 
         findViews();
+
+        // Make bold part of the instructions
+        TextView instructionsTexView = (TextView) findViewById(R.id.instructions_textview);
+        instructionsTexView.setText(Html.fromHtml("Welcome to the Balloon Game.<br/><br/>Your goal for this game is to make as much money as possible by inflating the balloons. To play, tap the <b>pump button to inflate the balloon and earn 25 cents for each pump</b>. To collect your money for each balloon, hit the <b<collect button</b>. But remember, the more you pump the balloon, the greater chance of it bursting. The max amount you can win <b>per balloon</b> is $2.50. When it bursts, you get no money for that balloon. Your goal is to earn as much possible over the <b>15 balloons</b>."));
 
         // Prevent pumping or collecting before game start
         pumpButton.setEnabled(false);
