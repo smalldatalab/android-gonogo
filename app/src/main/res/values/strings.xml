@@ -7,7 +7,7 @@
     <string name="profile_action">Profile</string>
     <string name="logout_action">Logout</string>
     <string name="enabled_reminders_label">Enable Reminders</string>
-    <string name="connected_account_label">Connected Account:</string>
+    <string name="connected_account_label">Connected Account: email@school.edu</string>
     <string name="complete_baseline_label">Complete Baseline Self-Report</string>
 
     <!-- TODO: Remove or change this placeholder text -->

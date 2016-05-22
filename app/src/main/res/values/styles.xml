@@ -8,6 +8,7 @@
         <item name="colorAccent">@color/colorAccent</item>
         <item name="windowActionBar">true</item>
         <item name="windowNoTitle">false</item>
+        <item name="android:colorControlActivated">@color/darkBlue</item>
     </style>
 
     <style name="AppTheme.NoActionBar">

@@ -18,7 +18,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:text="SUBMIT"/>
+        android:text="SUBMIT"
+        android:backgroundTint="@color/darkBlue"
+        android:textColor="@color/whiteColor"/>
 
     <ListView
         android:id="@+id/listview"
