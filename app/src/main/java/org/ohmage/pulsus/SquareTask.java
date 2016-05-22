@@ -79,6 +79,13 @@ public class SquareTask extends AppCompatActivity {
             @Override
             public void run() {
 
+                startTaskButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        tappedSquare();
+                    }
+                });
+
                 mainLayout.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -161,7 +168,7 @@ public class SquareTask extends AppCompatActivity {
 
                                         // Set square back to vertical position
                                         if (horizontal)
-                                            squareView.setRotation(-90);
+                                            squareView.setRotation(0);
 
                                         testInProgress = Boolean.FALSE;
 
@@ -219,7 +226,7 @@ public class SquareTask extends AppCompatActivity {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                feedbackLabel.animate().alpha(0.f);
+                feedbackLabel.animate().setDuration(100).alpha(0.f);
             }
         }, 600);
 
@@ -238,15 +245,15 @@ public class SquareTask extends AppCompatActivity {
         int numWrongAnswers = TOTAL_LOOPS - numRightAnswers;
 
         // Compute average response time
-        int occurrences, total;
-        occurrences = total = 0;
+        double occurrences, total;
+        occurrences = total = 0.0;
         for (int i=0; i<TOTAL_LOOPS; i++) {
             if (responseTimes[i] > 0) {
                 total += responseTimes[i];
                 occurrences++;
             }
         }
-        double averageResponseTime = (double)total / occurrences;
+        int averageResponseTime = (int) (total / occurrences);
 
         // Commissions (hit when should not
         for (int i=0; i<TOTAL_LOOPS; i++) {
@@ -255,17 +262,43 @@ public class SquareTask extends AppCompatActivity {
 
         // Make results string
         String results = "";
-        results += "Correct Answers: " + numRightAnswers + "\n";
-        results += "Incorrect Answers: " + numWrongAnswers + "\n";
+        results += "Correct Answers: " + numRightAnswers + "\n\n";
+        results += "Incorrect Answers: " + numWrongAnswers + "\n\n";
         if (occurrences > 0) {
-            results += "Mean Response Time: " + averageResponseTime + " msec" + "\n";
+            results += "Mean Response Time: " + averageResponseTime + " msec" + "\n\n";
         }
-//        "Number of Commissions (hit when should not): %d\n\n"
-//        "Number of Ommissions (not hit when should): %d",
+        results += "Number of Commissions (hit when should not): " + numberOfCommissions() + "\n\n";
+        results += "Number of Omissions (not hit when should): " + numberOfOmissions();
 
         // Display results in instructions textview
         instructionsTextView.setText(results);
+        instructionsTextView.setTextSize(17);
         instructionsTextView.setGravity(Gravity.CENTER_VERTICAL);
         instructionsTextView.animate().alpha(1.f);
+    }
+
+
+    private int numberOfCommissions() {
+        int commissions = 0;
+        for (int i = 0; i < goCuesArray.length; i++) {
+            Boolean cue = goCuesArray[i];
+            Boolean correct = correctnessArray[i];
+            if (!cue && !correct) {
+                commissions++;
+            }
+        }
+        return commissions;
+    }
+
+    private int numberOfOmissions() {
+        int ommissions = 0;
+        for (int i = 0; i < goCuesArray.length; i++) {
+            Boolean cue = goCuesArray[i];
+            Boolean correct = correctnessArray[i];
+            if (cue && !correct) {
+                ommissions++;
+            }
+        }
+        return ommissions;
     }
 }

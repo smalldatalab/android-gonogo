@@ -53,13 +53,15 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="60dp"
-        android:text="@string/start_square_task"
+        android:text="@string/start_task"
         android:id="@+id/start_square_task_button"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_alignRight="@+id/square_task_instructions"
-        android:layout_alignEnd="@+id/square_task_instructions" />
+        android:layout_alignEnd="@+id/square_task_instructions"
+        android:backgroundTint="@color/darkBlue"
+        android:textColor="@color/whiteColor"/>
 
     <TextView
         android:id="@+id/feedback_label"
