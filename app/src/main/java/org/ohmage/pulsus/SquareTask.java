@@ -40,11 +40,17 @@ public class SquareTask extends AppCompatActivity {
     int currentIndex = 0;
 
     // Testing Variables
-    int TOTAL_LOOPS = 10;
+    int TOTAL_LOOPS = 75;
     Chronometer chronometer;
     long[] responseTimes = new long[TOTAL_LOOPS];
     Boolean[] correctnessArray = new Boolean[TOTAL_LOOPS];
     Boolean[] goCuesArray = new Boolean[TOTAL_LOOPS];
+
+    // Durations
+    int DURATION_FIXATION_CROSS = 300;
+    int DURATION_BLANK_SCREEN = 400;
+    int DURATION_TARGET_ON_SCREEN = 600;
+    int DURATION_WAIT_LAP = 100;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -187,15 +193,15 @@ public class SquareTask extends AppCompatActivity {
                                                     showResults();
                                                 }
                                             }
-                                        }, 600);
+                                        }, DURATION_WAIT_LAP);
                                     }
-                                }, 1000);
+                                }, DURATION_TARGET_ON_SCREEN);
                             }
                         }, 550);
                     }
-                }, 500);
+                }, DURATION_BLANK_SCREEN);
             }
-        }, 800);
+        }, DURATION_FIXATION_CROSS);
     }
 
     private void tappedSquare() {
