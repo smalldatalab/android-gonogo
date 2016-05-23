@@ -28,10 +28,11 @@
                 android:orientation="horizontal"
                 android:layout_marginBottom="6dp">
                 <TextView
+                    android:id="@+id/potential_gain_textview"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight=".60"
-                    android:text="Potential Gain: \n$0.00"
+                    android:text="@string/potential_gain_default_text"
                     android:textSize="15dp"
                     android:textColor="#000000"
                     android:gravity="center"
@@ -53,10 +54,11 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
                 <TextView
+                    android:id="@+id/total_earnings_textview"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight=".60"
-                    android:text="Balloon 1 out of 15.\nTotal Earnings: $0.00"
+                    android:text="@string/total_earnings_default_text"
                     android:textSize="15dp"
                     android:textColor="#000000"
                     android:gravity="center"

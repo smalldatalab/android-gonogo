@@ -16,4 +16,6 @@
     <string name="square_task_instructions">Welcome to the Square Task.\n\n\nOnce you start, you will be presented with a rectangle. When the rectangle turns green, tap anywhere on the screen as quickly as possible. When it turns blue, do not respond at all. \n\nThe test will take approximately 3 min.</string>
     <string name="plus">Plus</string>
     <string name="balloon_game_instructions">Welcome to the Balloon Game.\n\nYour goal for this game is to make as much money as possible by inflating the balloons. To play, tap the pump button to inflate the balloon and earn 25 cents for each pump. To collect your money for each balloon, hit the collect button. But remember, the more you pump the balloon, the greater chance of it bursting. The max amount you can win per balloon is $2.50. When it bursts, you get no money for that balloon. Your goal is to earn as much possible over the 15 balloons.</string>
+    <string name="total_earnings_default_text">Balloon 1 out of 15.\nTotal Earnings: $0.00</string>
+    <string name="potential_gain_default_text">Potential Gain: \n$0.00</string>
 </resources>
