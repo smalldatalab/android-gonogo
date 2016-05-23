@@ -1,11 +1,15 @@
 package org.ohmage.pulsus;
 
 import android.os.Handler;
+import android.os.SystemClock;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Html;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Chronometer;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -45,7 +49,11 @@ public class BalloonGame extends AppCompatActivity {
 
     // Data Recording
     Boolean lastBalloonExploded = false;
-
+    Chronometer chronometer;
+    int[] pumpsPerBalloon = new int[NUMBER_OF_BALLOONS];
+    int[] pumpsAfterExplode = new int[NUMBER_OF_BALLOONS];
+    int[] pumpsAfterNoExplode = new int[NUMBER_OF_BALLOONS];
+    int[] completionTimes = new int[NUMBER_OF_BALLOONS];
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,9 +62,11 @@ public class BalloonGame extends AppCompatActivity {
 
         findViews();
 
+        chronometer = new Chronometer(getBaseContext());
+
         // Make bold part of the instructions
         TextView instructionsTexView = (TextView) findViewById(R.id.instructions_textview);
-        instructionsTexView.setText(Html.fromHtml("Welcome to the Balloon Game.<br/><br/>Your goal for this game is to make as much money as possible by inflating the balloons. To play, tap the <b>pump button to inflate the balloon and earn 25 cents for each pump</b>. To collect your money for each balloon, hit the <b<collect button</b>. But remember, the more you pump the balloon, the greater chance of it bursting. The max amount you can win <b>per balloon</b> is $2.50. When it bursts, you get no money for that balloon. Your goal is to earn as much possible over the <b>15 balloons</b>."));
+        instructionsTexView.setText(Html.fromHtml(getString(R.string.balloon_game_html_instructions)));
 
         // Prevent pumping or collecting before game start
         pumpButton.setEnabled(false);
@@ -69,12 +79,16 @@ public class BalloonGame extends AppCompatActivity {
 
                 // Hide instructions and show game layout
                 instructionsLayout.animate().setDuration(300).alpha(0.f);
+                startButton.setEnabled(false);
                 gameLayout.animate().setDuration(300).alpha(1.f);
                 gameLayout.bringToFront();
 
                 // Allow for pump and collect
                 pumpButton.setEnabled(true);
                 collectButton.setEnabled(true);
+
+                chronometer.setBase(SystemClock.elapsedRealtime());
+                chronometer.start();
             }
         });
         mExplosionField = ExplosionField.attach2Window(this);
@@ -128,8 +142,8 @@ public class BalloonGame extends AppCompatActivity {
         enableButtons(false);
 
         // Inflate Balloon
-        balloonImageView.animate().scaleXBy(SCALE_X);
-        balloonImageView.animate().scaleYBy(SCALE_Y).withEndAction(new Runnable() {
+        balloonImageView.animate().setDuration(300).scaleXBy(SCALE_X);
+        balloonImageView.animate().setDuration(300).scaleYBy(SCALE_Y).withEndAction(new Runnable() {
             @Override
             public void run() {
                 enableButtons(true);
@@ -141,6 +155,10 @@ public class BalloonGame extends AppCompatActivity {
     }
 
     private void tappedCollect() {
+        // Record time spent
+        long time = SystemClock.elapsedRealtime() - chronometer.getBase();
+        completionTimes[currentBalloon-1] = (int) (time - sumOfAllElementsInArray(completionTimes));
+
         currentBalloon++;
         lastBalloonExploded = false;
         resetBalloon();
@@ -167,6 +185,7 @@ public class BalloonGame extends AppCompatActivity {
         }, 1300);
     }
 
+    @NonNull
     private Boolean shouldImplodeNow() {
         if (pumps <= 1) {
             return false;
@@ -199,8 +218,8 @@ public class BalloonGame extends AppCompatActivity {
     private void resetBalloon() {
         // Reset Balloon Image
         enableButtons(false);
-        balloonImageView.animate().scaleX(SCALE_ORIGINAL);
-        balloonImageView.animate().scaleY(SCALE_ORIGINAL).withEndAction(new Runnable() {
+        balloonImageView.animate().setDuration(100).scaleX(SCALE_ORIGINAL);
+        balloonImageView.animate().setDuration(100).scaleY(SCALE_ORIGINAL).withEndAction(new Runnable() {
             @Override
             public void run() {
                 enableButtons(true);
@@ -208,6 +227,16 @@ public class BalloonGame extends AppCompatActivity {
         });
         balloonImageView.setAlpha(1.f);
         mExplosionField.clear();
+
+        // Record Data after first balloon
+        if (currentBalloon > 1) {
+            pumpsPerBalloon[currentBalloon-2] = pumps;
+            if (lastBalloonExploded) {
+                pumpsAfterExplode[currentBalloon-2] = pumps;
+            } else {
+                pumpsAfterNoExplode[currentBalloon-2] = pumps;
+            }
+        }
 
         // Update trackers
         earnings += potentialGain;
@@ -229,9 +258,33 @@ public class BalloonGame extends AppCompatActivity {
 
         // Results
         String results = "";
+        results += "Average Pumps per Balloon: " +  String.format("%.1f", averageOfNonZeroValues(pumpsPerBalloon))+"\n\n";
         results += "Total Earnings: $" + String.format("%.2f", earnings) +"\n\n";
         results += "Number of Balloon Explosions: "+ numberOfExplosions +"\n\n";
+        float completionTime = (SystemClock.elapsedRealtime() - chronometer.getBase()) / 60000;
+        results += "Total Time to Complete: "+ String.format("%.2f", completionTime) + " mn";
         instructionsTextView.setText(results);
         instructionsLayout.animate().alpha(1.f);
     }
+
+    private int sumOfAllElementsInArray(int[] array) {
+        int output = 0;
+        for (int i = 0; i < array.length; i++) {
+            output += array[i];
+        }
+        return output;
+    }
+
+    private float averageOfNonZeroValues(int[] array) {
+        float total = 0.f;
+        int count = 0;
+        for (int i = 0; i < array.length; i++) {
+            if (array[i] > 0) {
+                total += (float) array[i];
+                count++;
+            }
+        }
+        return (count > 0) ? (total / count) : 0;
+    }
+
 }
