@@ -5,8 +5,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import io.smalldatalab.omhclient.DSUClient;
 
 public class ProfileActivity extends AppCompatActivity {
+
+    private DSUClient mDSUClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

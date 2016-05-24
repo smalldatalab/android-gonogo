@@ -12,25 +12,16 @@
     tools:context="org.ohmage.pulsus.ProfileActivity"
     android:orientation="vertical">
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/connected_account_label"
-        android:id="@+id/connectAccountTextView"
-        android:gravity="center"
-        android:layout_margin="10dp"
-        android:paddingBottom="@dimen/profile_bottom_padding"/>
-
     <Switch
         android:layout_centerHorizontal="true"
-        android:layout_below="@id/connectAccountTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/enabled_reminders_label"
         android:id="@+id/switch1"
         android:layout_gravity="center"
         android:switchPadding="@dimen/switch_padding"
-        android:paddingBottom="@dimen/profile_bottom_padding"/>
+        android:paddingBottom="@dimen/profile_bottom_padding"
+        android:paddingTop="30dip"/>
 
     <Button
         android:layout_alignParentBottom="true"

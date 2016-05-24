@@ -3,6 +3,7 @@ package org.ohmage.pulsus;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -10,14 +11,27 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import io.smalldatalab.omhclient.DSUClient;
+
 public class MainActivity extends AppCompatActivity {
+
+    Button squareTaskButton, balloonGameButton, selfReportButton;
+    private DSUClient mDSUClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        final Button squareTaskButton = (Button) findViewById(R.id.square_task_button);
+        // Init a DSU client
+        mDSUClient =
+                new DSUClient(
+                        DSUHelper.getUrl(this),
+                        this.getString(R.string.dsu_client_id),
+                        this.getString(R.string.dsu_client_secret),
+                        this);
+
+        squareTaskButton = (Button) findViewById(R.id.square_task_button);
         squareTaskButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -26,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        final Button balloonGameButton = (Button) findViewById(R.id.balloon_game_button);
+        balloonGameButton = (Button) findViewById(R.id.balloon_game_button);
         balloonGameButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -35,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        final Button selfReportButton = (Button) findViewById(R.id.self_report_button);
+        selfReportButton = (Button) findViewById(R.id.self_report_button);
         selfReportButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -43,6 +57,16 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        // show LoginActivity if the user has not sign in
+        if (!mDSUClient.isSignedIn()) {
+            Intent mainActivityIntent = new Intent(MainActivity.this, SigninActivity.class);
+            startActivity(mainActivityIntent);
+        }
     }
 
     @Override
@@ -61,7 +85,18 @@ public class MainActivity extends AppCompatActivity {
                 break;
 
             case R.id.action_logout:
-                Toast.makeText(getBaseContext(), "Clicked Logout", Toast.LENGTH_SHORT).show();
+                new Thread() {
+                    @Override
+                    public void run() {
+                        try {
+                            mDSUClient.blockingSignOut();
+                        } catch (Exception e) {
+                            Log.e(MainActivity.class.getSimpleName(), "Logout error", e);
+                        }
+                        Intent mainActivityIntent = new Intent(MainActivity.this, SigninActivity.class);
+                        startActivity(mainActivityIntent);
+                    }
+                }.start();
                 break;
 
             default:

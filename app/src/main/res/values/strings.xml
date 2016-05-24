@@ -10,8 +10,19 @@
     <string name="connected_account_label">Connected Account: email@school.edu</string>
     <string name="complete_baseline_label">Complete Baseline Self-Report</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <!-- for omhclientlib -->
+    <string name="dsu_provider_authorities">io.smalldatalab.android.gonogo.account</string>
+
+    <!--dsu settings-->
+    <string name="dsu_client_id">io.smalldata.ios.goNoGo</string>
+    <string name="dsu_client_secret">IdS2f12jmYomzEH5Eo43jkLD7z76c</string>
+    <string name="dsu_client_url">http://aws-qa.smalldata.io/dsu/</string> <!-- Use QA Server for now -->
+    <string name="edit_url">(Edit server address)</string>
+    <string name="or">~ or ~</string>
+    <string name="username_hint">Username</string>
+    <string name="password_hint">Password</string>
+    <string name="login">Login</string>
+
     <string name="start_task">Start</string>
     <string name="square_task_instructions">Welcome to the Square Task.\n\n\nOnce you start, you will be presented with a rectangle. When the rectangle turns green, tap anywhere on the screen as quickly as possible. When it turns blue, do not respond at all. \n\nThe test will take approximately 3 min.</string>
     <string name="plus">Plus</string>
