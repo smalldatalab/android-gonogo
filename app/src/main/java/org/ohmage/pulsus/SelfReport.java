@@ -1,5 +1,7 @@
 package org.ohmage.pulsus;
 
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -26,7 +28,7 @@ public class SelfReport extends AppCompatActivity {
     Button doneButton;
     TextView header;
 
-    Boolean isBaselineSurvey = Boolean.FALSE;
+    Boolean isBaselineSurvey;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -41,7 +43,9 @@ public class SelfReport extends AppCompatActivity {
         // Retrieve Intent flag about survey type
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
-            isBaselineSurvey = extras.getBoolean("isBaseline", Boolean.FALSE);
+            isBaselineSurvey = extras.getBoolean("isBaseline", !hasCompletedBaseline());
+        } else {
+            isBaselineSurvey = !hasCompletedBaseline();
         }
 
         // Header
@@ -64,7 +68,19 @@ public class SelfReport extends AppCompatActivity {
 
     }
 
+    private boolean hasCompletedBaseline() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+        return prefs.getBoolean("HAS_COMPLETED_BASELINE", false);
+    }
+
     private void submit(int[] answers)  {
+
+        // Remember test was made
+        if (isBaselineSurvey) {
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+            prefs.edit().putBoolean("HAS_COMPLETED_BASELINE", true).commit();
+        }
+
         try {
             DateTime dt = new DateTime();
 
