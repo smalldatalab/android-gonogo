@@ -13,9 +13,15 @@ import android.widget.Chronometer;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import org.joda.time.DateTime;
+import org.json.JSONObject;
 
 import java.util.Random;
 
+import io.smalldatalab.omhclient.DSUDataPoint;
+import io.smalldatalab.omhclient.DSUDataPointBuilder;
 import tyrantgit.explosionfield.ExplosionField;
 
 public class BalloonGame extends AppCompatActivity {
@@ -250,6 +256,9 @@ public class BalloonGame extends AppCompatActivity {
     }
 
     private void showResults() {
+        // Submit to DSU
+        submitResults();
+
         // Disable buttons and hide game layout
         enableButtons(false);
         gameLayout.animate().alpha(0.f);
@@ -285,6 +294,57 @@ public class BalloonGame extends AppCompatActivity {
             }
         }
         return (count > 0) ? (total / count) : 0;
+    }
+
+    private void submitResults() {
+        try {
+            DateTime dt = new DateTime();
+            float completionTime = (SystemClock.elapsedRealtime() - chronometer.getBase()) / 1000;
+
+            JSONObject obj = new JSONObject();
+            obj.put("variable_label", "BART");
+            obj.put("completion_time", completionTime);
+            obj.put("pumps_mean", averageOfNonZeroValues(pumpsPerBalloon));
+            obj.put("number_of_explosions", numberOfExplosions);
+            obj.put("number_of_balloons", NUMBER_OF_BALLOONS);
+            obj.put("total_gains", earnings);
+            obj.put("max_pumps_per_balloon", MAX_PUMPS);
+            obj.put("earning_increment_per_pump", gainPerPump);
+            obj.put("mean_pumps_after_explode", averageOfNonZeroValues(pumpsAfterExplode));
+            obj.put("mean_pumps_after_no_explode", averageOfNonZeroValues(pumpsAfterNoExplode));
+            obj.put("time_per_balloon", completionTimes);
+            obj.put("pumps_range", rangeOfValues(pumpsPerBalloon));
+            obj.put("pumps_per_balloon", pumpsPerBalloon);
+
+            DSUDataPoint dataPoint = new DSUDataPointBuilder()
+                    .setSchemaNamespace(getString(R.string.schema_namespace))
+                    .setSchemaName(getString(R.string.balloon_schema_name))
+                    .setSchemaVersion(getString(R.string.schema_version))
+                    .setAcquisitionModality(getString(R.string.acquisition_modality))
+                    .setAcquisitionSource(getString(R.string.acquisition_source_name))
+                    .setCreationDateTime(dt.toGregorianCalendar())
+                    .setBody(obj).createDSUDataPoint();
+            dataPoint.save();
+
+        } catch (Exception e) {
+            Toast.makeText(BalloonGame.this, "Submission failed. Please contact study coordinator", Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private int rangeOfValues(int[] array) {
+        if (array.length < 2) {
+            return 0;
+        }
+
+        int xmax = Integer.MAX_VALUE;
+        int xmin = Integer.MIN_VALUE;
+
+        for (int i = 0; i < array.length; i++) {
+            int x = array[i];
+            if (x < xmin) { xmin = x; }
+            if (x > xmax) { xmax = x; }
+        }
+        return xmax - xmin;
     }
 
 }

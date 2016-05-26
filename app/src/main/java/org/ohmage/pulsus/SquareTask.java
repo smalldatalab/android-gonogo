@@ -20,9 +20,15 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.joda.time.DateTime;
+import org.json.JSONObject;
+
 import java.lang.reflect.Array;
 import java.util.Random;
 import java.util.Timer;
+
+import io.smalldatalab.omhclient.DSUDataPoint;
+import io.smalldatalab.omhclient.DSUDataPointBuilder;
 
 public class SquareTask extends AppCompatActivity {
 
@@ -265,11 +271,6 @@ public class SquareTask extends AppCompatActivity {
         }
         int averageResponseTime = (int) (total / occurrences);
 
-        // Commissions (hit when should not
-        for (int i=0; i<TOTAL_LOOPS; i++) {
-
-        }
-
         // Make results string
         String results = "";
         results += "Correct Answers: " + numRightAnswers + "\n\n";
@@ -285,6 +286,8 @@ public class SquareTask extends AppCompatActivity {
         instructionsTextView.setTextSize(17);
         instructionsTextView.setGravity(Gravity.CENTER_VERTICAL);
         instructionsTextView.animate().alpha(1.f);
+
+        submitResults(numRightAnswers, numWrongAnswers, averageResponseTime);
     }
 
 
@@ -301,14 +304,45 @@ public class SquareTask extends AppCompatActivity {
     }
 
     private int numberOfOmissions() {
-        int ommissions = 0;
+        int omissions = 0;
         for (int i = 0; i < goCuesArray.length; i++) {
             Boolean cue = goCuesArray[i];
             Boolean correct = correctnessArray[i];
             if (cue && !correct) {
-                ommissions++;
+                omissions++;
             }
         }
-        return ommissions;
+        return omissions;
+    }
+
+    private void submitResults(int correctResponses, int incorrectResponses, int meanResponseTime) {
+
+        try {
+            DateTime dt = new DateTime();
+
+            JSONObject obj = new JSONObject();
+            obj.put("variable_label", "Go-no-go");
+            obj.put("number_of_trials", TOTAL_LOOPS);
+            obj.put("correct_responses", correctResponses);
+            obj.put("incorrect_responses", incorrectResponses);
+            obj.put("commissions", numberOfCommissions());
+            obj.put("omissions", numberOfOmissions());
+            obj.put("response_time_mean", meanResponseTime);
+            obj.put("correctness_array", correctnessArray);
+            obj.put("response_times_array", responseTimes);
+
+            DSUDataPoint dataPoint = new DSUDataPointBuilder()
+                    .setSchemaNamespace(getString(R.string.schema_namespace))
+                    .setSchemaName(getString(R.string.square_task_schema_name))
+                    .setSchemaVersion(getString(R.string.schema_version))
+                    .setAcquisitionModality(getString(R.string.acquisition_modality))
+                    .setAcquisitionSource(getString(R.string.acquisition_source_name))
+                    .setCreationDateTime(dt.toGregorianCalendar())
+                    .setBody(obj).createDSUDataPoint();
+            dataPoint.save();
+
+        } catch (Exception e) {
+            Toast.makeText(SquareTask.this, "Submission failed. Please contact study coordinator", Toast.LENGTH_LONG).show();
+        }
     }
 }

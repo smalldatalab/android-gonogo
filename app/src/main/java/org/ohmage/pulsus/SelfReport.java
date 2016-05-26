@@ -10,7 +10,15 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.joda.time.DateTime;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.Arrays;
+import java.util.Locale;
+
+import io.smalldatalab.omhclient.DSUDataPoint;
+import io.smalldatalab.omhclient.DSUDataPointBuilder;
 
 public class SelfReport extends AppCompatActivity {
 
@@ -47,34 +55,64 @@ public class SelfReport extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Adapter adapter = (Adapter) listview.getAdapter();
-                Toast.makeText(getBaseContext(), "Answers:\n"+Arrays.toString(adapter.getAnswers()), Toast.LENGTH_SHORT).show();
+                int[] answers = adapter.getAnswers();
+                submit(answers);
+                Toast.makeText(SelfReport.this, "Thanks for Completing a Self-Report!", Toast.LENGTH_SHORT).show();
                 finish();
             }
         });
 
     }
 
+    private void submit(int[] answers)  {
+        try {
+            DateTime dt = new DateTime();
+
+            JSONObject obj = new JSONObject();
+            String[] questions = getSurveyQuestions();
+            for (int i = 0; i < answers.length; i++) {
+                obj.put(questions[i], answers[i]);
+            }
+
+            String testType = isBaselineSurvey ? "baseline" : "daily";
+            obj.put("test_type", testType);
+
+            DSUDataPoint dataPoint = new DSUDataPointBuilder()
+                    .setSchemaNamespace(getString(R.string.schema_namespace))
+                    .setSchemaName(getString(R.string.vas_schema_name))
+                    .setSchemaVersion(getString(R.string.schema_version))
+                    .setAcquisitionModality(getString(R.string.acquisition_modality))
+                    .setAcquisitionSource(getString(R.string.acquisition_source_name))
+                    .setCreationDateTime(dt.toGregorianCalendar())
+                    .setBody(obj).createDSUDataPoint();
+            dataPoint.save();
+
+        } catch (Exception e) {
+            Toast.makeText(SelfReport.this, "Submission failed. Please contact study coordinator", Toast.LENGTH_LONG).show();
+        }
+    }
+
 
     private String[] getSurveyQuestions() {
         if (isBaselineSurvey) {
             String[] baselineQuestions = {
-                    "I get distracted easily.",
-                    "I do things that I end up regretting later.",
-                    "I have difficulty controlling how much I check my mobile phone.",
-                    "I stick to my long-term goals even if I am tempted by short-term pleasure.",
-                    "I tend to do things that feel good in the short-term but are bad for me in the long-term.",
-                    "I have difficulty controlling myself when I am tempted by something even if I don’t want to do it.",
-                    "I have difficulty controlling how much I use social media.",
-                    "I feel like I am missing out on fun activities going on around me.",
-                    "I have difficulty completing tasks that require me to stay focused for long periods.",
-                    "I tend to do things I regret because I get influenced by other people."
+                    "I get distracted easily",
+                    "I do things that I end up regretting later",
+                    "I have difficulty controlling how much I check my mobile phone",
+                    "I stick to my long-term goals even if I am tempted by short-term pleasure",
+                    "I tend to do things that feel good in the short-term but are bad for me in the long-term",
+                    "I have difficulty controlling myself when I am tempted by something even if I don’t want to do it",
+                    "I have difficulty controlling how much I use social media",
+                    "I feel like I am missing out on fun activities going on around me",
+                    "I have difficulty completing tasks that require me to stay focused for long periods",
+                    "I tend to do things I regret because I get influenced by other people"
             };
             return baselineQuestions;
         } else {
-            String[] dailyQuestions = {"I felt distracted.",
-                    "I did or said things without thinking.",
-                    "I felt well rested and alert.",
-                    "I felt bored with what I was doing."
+            String[] dailyQuestions = {"I felt distracted",
+                    "I did or said things without thinking",
+                    "I felt well rested and alert",
+                    "I felt bored with what I was doing"
             };
             return dailyQuestions;
         }
